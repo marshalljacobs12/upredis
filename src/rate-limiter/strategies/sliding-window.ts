@@ -69,7 +69,7 @@ export function createSlidingWindow(
 			const results = await pipeline.exec();
 
 			// pipeline.exec() returns [[err, result], [err, result], ...]
-			const count = (results![1][1] as number) ?? 0;
+			const count = (results?.[1][1] as number) ?? 0;
 
 			const allowed = count < limit;
 			return {

@@ -63,11 +63,7 @@ export class Leaderboard {
 
 	/** Increment a member's score by `amount`. Returns the new score. */
 	async increment(member: string, amount: number): Promise<number> {
-		const newScore = await this.redis.zincrby(
-			this.redisKey,
-			amount,
-			member,
-		);
+		const newScore = await this.redis.zincrby(this.redisKey, amount, member);
 		return Number.parseFloat(newScore);
 	}
 
@@ -86,8 +82,8 @@ export class Leaderboard {
 		pipeline.zscore(this.redisKey, member);
 		const results = await pipeline.exec();
 
-		const rank = results![0][1] as number | null;
-		const score = results![1][1] as string | null;
+		const rank = results?.[0][1] as number | null;
+		const score = results?.[1][1] as string | null;
 
 		if (rank === null || score === null) return null;
 
@@ -97,18 +93,8 @@ export class Leaderboard {
 	/** Get the top `count` members. */
 	async top(count: number): Promise<LeaderboardEntry[]> {
 		const raw = this.desc
-			? await this.redis.zrevrange(
-					this.redisKey,
-					0,
-					count - 1,
-					"WITHSCORES",
-				)
-			: await this.redis.zrange(
-					this.redisKey,
-					0,
-					count - 1,
-					"WITHSCORES",
-				);
+			? await this.redis.zrevrange(this.redisKey, 0, count - 1, "WITHSCORES")
+			: await this.redis.zrange(this.redisKey, 0, count - 1, "WITHSCORES");
 
 		return this.parseWithScores(raw, 0);
 	}
@@ -117,10 +103,7 @@ export class Leaderboard {
 	 * Get members around a given member (their neighborhood).
 	 * Returns up to `count` members above and `count` below, plus the member.
 	 */
-	async around(
-		member: string,
-		count: number,
-	): Promise<LeaderboardEntry[]> {
+	async around(member: string, count: number): Promise<LeaderboardEntry[]> {
 		// First, find the member's rank
 		const memberRank = this.desc
 			? await this.redis.zrevrank(this.redisKey, member)
@@ -132,18 +115,8 @@ export class Leaderboard {
 		const stop = memberRank + count;
 
 		const raw = this.desc
-			? await this.redis.zrevrange(
-					this.redisKey,
-					start,
-					stop,
-					"WITHSCORES",
-				)
-			: await this.redis.zrange(
-					this.redisKey,
-					start,
-					stop,
-					"WITHSCORES",
-				);
+			? await this.redis.zrevrange(this.redisKey, start, stop, "WITHSCORES")
+			: await this.redis.zrange(this.redisKey, start, stop, "WITHSCORES");
 
 		return this.parseWithScores(raw, start);
 	}
@@ -194,7 +167,7 @@ export class Leaderboard {
 
 		return members.map((m, i) => ({
 			...m,
-			rank: rankResults![i][1] as number,
+			rank: rankResults?.[i][1] as number,
 		}));
 	}
 

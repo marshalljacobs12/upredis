@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Leaderboard } from "../src/leaderboard/index.js";
 import { useRedis } from "./setup.js";
 
@@ -35,7 +35,7 @@ describe("Leaderboard", () => {
 
 			expect(await lb.count()).toBe(1);
 			const entry = await lb.rank("alice");
-			expect(entry!.score).toBe(200);
+			expect(entry?.score).toBe(200);
 		});
 	});
 
@@ -200,8 +200,8 @@ describe("Leaderboard", () => {
 			// alice (2850) = rank 1, bob (2340) = rank 2 in highToLow
 			const alice = results.find((r) => r.member === "alice");
 			const bob = results.find((r) => r.member === "bob");
-			expect(alice!.rank).toBe(1);
-			expect(bob!.rank).toBe(2);
+			expect(alice?.rank).toBe(1);
+			expect(bob?.rank).toBe(2);
 		});
 
 		it("returns empty for range with no matches", async () => {

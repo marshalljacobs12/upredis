@@ -20,10 +20,7 @@ export function createTokenBucket(
 	 * Call the Lua script with a consume flag.
 	 * consume=true for limit(), consume=false for peek().
 	 */
-	async function run(
-		key: string,
-		consume: boolean,
-	): Promise<RateLimitResult> {
+	async function run(key: string, consume: boolean): Promise<RateLimitResult> {
 		const nowMs = Date.now();
 
 		const [allowed, remaining] = (await redis.eval(

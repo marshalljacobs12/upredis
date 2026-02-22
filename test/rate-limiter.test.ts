@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { RateLimiter } from "../src/rate-limiter/index.js";
 import { useRedis } from "./setup.js";
 
